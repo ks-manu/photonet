@@ -23,7 +23,6 @@ from flask import Flask, jsonify, request, redirect
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
-server = app.server
 
 
 def allowed_file(filename):
@@ -111,5 +110,6 @@ def detect_faces_in_image(file_stream):
     return jsonify(result)
 
 if __name__ == "__main__":
+    from os import environ
     # app.run(host='0.0.0.0', port=5001, debug=True)
-    app.run_server(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=environ.get('PORT', 5555))
