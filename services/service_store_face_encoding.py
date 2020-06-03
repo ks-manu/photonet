@@ -3,7 +3,7 @@ import pickle
 # from config.database_settings import *
 
 # database_path = r"../database/facial_data.csv"
-database_url = "encodings.pickle"
+database_path = "./database/encodings.pickle"
 # # database_path = settings.database_path
 # database_df = pd.read_csv(database_path)
 # database_df['faceEncoding'].astype(object)
@@ -59,31 +59,41 @@ faceEncoding = [
 # faceID = ["obama1", "kwaku1"]
 faceID = ["Obama", "Kwaku"]
 # dta = {'faceID':faceID, 'faceEncoding': faceEncoding}
-# f = open(database_url, "rb")
+# f = open(database_path, "rb")
 # f.write(pickle.dumps(dta))
 
 
-# dat = pickle.loads(open(database_url, "rb").read())
+# dat = pickle.loads(open(database_path, "rb").read())
 # print(dat['faceEncoding'])
 # print(dat['faceID'])
 
 '''
 Pass:
-1. List containing face encoding & face ID in the form
-    -->sample_data = [['sample encoding1', 'sample encoding2'],['sample id1', 'sample id2']]
-2. current df being held in memory
+1. Dict containing List(face encoding) & List(face ID) in the form
+    --> {'faceID':faceID, 'faceEncoding': faceEncoding}
+    #####sample_data = [['sample encoding1', 'sample encoding2'],['sample id1', 'sample id2']]
 '''
 
 def storeFaceEconding(faceEncoding_plus_faceID):
-    with open(database_url, 'rb') as fp:
-        update = pickle.load(fp)
+    with open(database_path, 'rb') as fp:
+        try:
+            update = pickle.load(fp)
+        except EOFError:
+            print("EOFError Triggered")
+            update = {'faceID':[faceEncoding_plus_faceID['faceID']], 'faceEncoding': [faceEncoding_plus_faceID['faceEncoding']]}
+            
         # update['faceID'] = update['faceID'].append(faceEncoding_plus_faceID['faceID'])
-        for i in range(len(faceEncoding_plus_faceID['faceID'])):
-            update['faceID'].append(faceEncoding_plus_faceID['faceID'][i])
-            update['faceEncoding'].append(faceEncoding_plus_faceID['faceEncoding'][i])
-    # print(update['faceID'])
-    # print(update['faceEncoding'])
-    with open(database_url, 'wb') as wp:
+        # update['faceEncoding'] = update['faceEncoding'].append(faceEncoding_plus_faceID['faceEncoding'])
+        # for i in range(len(faceEncoding_plus_faceID['faceID'])):
+            # print(faceEncoding_plus_faceID)
+        
+    update['faceID'].append(faceEncoding_plus_faceID['faceID'])
+    update['faceEncoding'].append(faceEncoding_plus_faceID['faceEncoding'])
+    # print(update)
+    # print(type(faceEncoding_plus_faceID['faceEncoding']))
+    # # print(update['faceID'])
+    # # print(update['faceEncoding'])
+    with open(database_path, 'wb') as wp:
         pickle.dump(update, wp)
 
     # for i in range(len(faceEncoding_plus_faceID[0])):
