@@ -10,9 +10,8 @@ def extractFaceMultiple(imageFileStreamList):
     return imageEncoding
 
 def extractFaceEncoding(imageFileStream):
-    imageEncoding = []
     imageFile = face_recognition.load_image_file(imageFileStream)
-    imageEncoding.append(face_recognition.face_encodings(imageFile)[0])
+    imageEncoding = face_recognition.face_encodings(imageFile)[0]
     
     return imageEncoding
 

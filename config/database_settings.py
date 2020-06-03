@@ -1,0 +1,1 @@
+database_path = r"../database/facial_data.csv"

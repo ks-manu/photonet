@@ -1,0 +1,1 @@
+delete /database/encodings.pickle and replace with empty version found in /config

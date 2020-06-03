@@ -18,6 +18,10 @@
 
 import face_recognition
 from flask import Flask, jsonify, request, redirect
+from services import service_extract_face_encoding, service_store_face_encoding, service_fetch_face_ID
+import pickle
+
+# database = pickle.loads(open("./database/facial_data.pickle", "rb").read())
 
 # You can change this to any folder on your system
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -29,6 +33,68 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
+@app.route('/service/checkid', methods=['GET','POST'])
+def check_upload():
+    # Check if a valid image file was uploaded
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return 300
+
+        file = request.files['file']
+
+        if file.filename == '':
+            return 300
+
+        if file and allowed_file(file.filename):
+            faceEncoding = service_extract_face_encoding.extractFaceEncoding(file)
+            faceID = service_fetch_face_ID.fetchFaceID(faceEncoding)
+            return faceID
+
+    # If no valid image file was uploaded, show the file upload form:
+    return '''
+    <!doctype html>
+    <title>Face Recognition</title>
+    <h1>Upload a picture and see if we know it is!</h1>
+    <form method="POST" enctype="multipart/form-data">
+      <input type="file" name="file">
+      <input type="submit" value="Upload">
+    </form>
+    '''
+
+@app.route('/service/storeid', methods=['GET','POST'])
+def register_upload():
+    # Check if a valid image file was uploaded
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return 300
+
+        file = request.files['file']
+
+        if file.filename == '':
+            return 300
+
+        if file and allowed_file(file.filename) and request.form.get('id'):
+            faceEncoding = service_extract_face_encoding.extractFaceEncoding(file)
+            storeFormat = {'faceID':request.form.get('id'), 'faceEncoding': faceEncoding}
+            service_store_face_encoding.storeFaceEconding(storeFormat)
+            return "Success"
+
+    # If no valid image file was uploaded, show the file upload form:
+    return '''
+    <!doctype html>
+    <title>Face Register</title>
+    <h1>Upload a picture to register for Face Recognition!</h1>
+    <form method="POST" enctype="multipart/form-data">
+      <input type="file" name="file">
+      <p>Name</p>
+      <input type="text" name="id" >
+      <input type="submit" value="Upload">
+    </form>
+    '''
+
+
+# storeFormat = {'faceID':faceID, 'faceEncoding': faceEncoding}
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_image():
@@ -112,4 +178,4 @@ def detect_faces_in_image(file_stream):
 if __name__ == "__main__":
     from os import environ
     # app.run(host='0.0.0.0', port=5001, debug=True)
-    app.run(host='0.0.0.0', port=environ.get('PORT', 5555))
+    app.run(host='0.0.0.0', port=environ.get('PORT', 5555), debug=False)
