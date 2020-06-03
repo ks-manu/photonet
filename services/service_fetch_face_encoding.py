@@ -1,5 +1,5 @@
 import face_recognition
-import pandas as pd
+# import pandas as pd
 #  app settings
 # from settings.settings import d
 database_path = r"./database/facial_data.csv"
