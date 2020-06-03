@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 import pickle
-database_path = "encodings.pickle"
+database_path = "./database/encodings.pickle"
 # f = open("encodings.pickle", "wb")
 data = [
 [-0.99934063,  0.88795481, -0.08936332, -0.07643753,  0.0080383,
@@ -72,23 +72,25 @@ def fetchFaceID(faceEncoding):
     known_faces_encoding = records['faceEncoding']
     known_faces_ID = records['faceID']
     face_distances =[]
-    for i in known_faces_encoding:
-        #     face_distances.append(np.linalg.norm([i] - faceEncoding, axis=1))
-        # best_match_index = np.argmin(face_distances)
-        # print (best_match_index)
+    # matches = face_recognition.compare_faces(records['faceEncoding'], faceEncoding)
+    for i in records['faceEncoding']:
+        # print(records['faceEncoding'])
+        # print(type(records['faceEncoding']))
+        # print(len(records['faceEncoding']))
 
-        matches = face_recognition.compare_faces(known_faces_encoding, faceEncoding)
+        matches = face_recognition.compare_faces(records['faceEncoding'], faceEncoding)
         # If a match was found in known_face_encodings, just use the first one.
         # if True in matches:
         #     first_match_index = matches.index(True)
         #     name = known_face_names[first_match_index]
 
         # Or instead, use the known face with the smallest distance to the new face
-        face_distances = face_recognition.face_distance(known_faces_encoding, faceEncoding)
+        face_distances = face_recognition.face_distance(records['faceEncoding'], faceEncoding)
     best_match_index = np.argmin(face_distances)
     if matches[best_match_index]:
         name = known_faces_ID[best_match_index]
     # print(name)
+    print (matches)
     return name
 
 
