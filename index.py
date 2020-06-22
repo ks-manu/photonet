@@ -37,11 +37,14 @@ def check_upload():
     return '''
     <!doctype html>
     <title>Face Recognition</title>
-    <h1>Upload a picture and see if we know it is!</h1>
+    <h1>Upload a picture. Let's see if we know it is!</h1>
     <form method="POST" enctype="multipart/form-data">
       <input type="file" name="file">
       <input type="submit" value="Upload">
     </form>
+    <br>
+    <p><a href="/service/storeid"> Register your own face </a>Done that already?</p>
+    <p> <a href="/service/checkid"> Click here</a> to check if we know you! </p>
     '''
 
 @app.route('/service/storeid', methods=['GET','POST'])
@@ -60,7 +63,15 @@ def register_upload():
             faceEncoding = service_extract_face_encoding.extractFaceEncoding(file)
             storeFormat = {'faceID':request.form.get('id'), 'faceEncoding': faceEncoding}
             service_store_face_encoding.storeFaceEconding(storeFormat)
-            return "Success"
+            return '''
+            <!doctype html>
+            <title>Face Register</title>
+            <h1>That was the hard part!</h1>
+
+            <h4>Now let's see if it worked. Upload an image here to check --> <a href="/service/checkid">Photo checker</a></h4>
+
+            <h5> You can also upload another face for us to detect</h5> <a href="/service/storeid"> Register your face </a>
+            '''
 
     # If no valid image file was uploaded, show the file upload form:
     return '''
@@ -73,6 +84,9 @@ def register_upload():
       <input type="text" name="id" >
       <input type="submit" value="Upload">
     </form>
+    
+    <h4>Already registered? Upload an image here to check --> <a href="/service/checkid">Photo checker</a> </h4>
+    <p>If you're unsure, try <a href="/">this test first</a></p>
     '''
 
 
@@ -103,6 +117,9 @@ def upload_image():
       <input type="file" name="file">
       <input type="submit" value="Upload">
     </form>
+
+    <h4>Are you ready to try it out? <a href="/service/storeid"> Register your face </a> </h4> 
+    <h5>Already registered? Upload an image here to check --> <a href="/service/checkid">Photo checker</a> </h5> 
     '''
 
 
