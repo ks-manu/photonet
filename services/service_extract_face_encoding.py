@@ -11,7 +11,7 @@ def extractFaceMultiple(imageFileStreamList):
 
 def extractFaceEncoding(imageFileStream):
     imageFile = face_recognition.load_image_file(imageFileStream)
-    imageEncoding = face_recognition.face_encodings(imageFile)[0]
+    imageEncoding = face_recognition.face_encodings(imageFile)
     
     return imageEncoding
 

@@ -30,8 +30,13 @@ def check_upload():
 
         if file and allowed_file(file.filename):
             faceEncoding = service_extract_face_encoding.extractFaceEncoding(file)
+            facecount = len(faceEncoding)
             faceID = service_fetch_face_ID.fetchFaceID(faceEncoding)
-            return faceID
+            res = {
+                "number of faces": facecount,
+                "name":faceID,
+            }
+            return jsonify(res)
 
     # If no valid image file was uploaded, show the file upload form:
     return '''
@@ -156,6 +161,7 @@ def detect_faces_in_image(file_stream):
     img = face_recognition.load_image_file(file_stream)
     # Get face encodings for any faces in the uploaded image
     unknown_face_encodings = face_recognition.face_encodings(img)
+    facecount= len(unknown_face_encodings)
 
     face_found = False
     is_obama = False
@@ -170,7 +176,8 @@ def detect_faces_in_image(file_stream):
     # Return the result as json
     result = {
         "face_found_in_image": face_found,
-        "is_picture_of_obama": is_obama
+        "is_picture_of_obama": is_obama,
+        "number_of_faces": facecount
     }
     return jsonify(result)
 
